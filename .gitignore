@@ -18,6 +18,7 @@
 
 sdkconfig
 sdkconfig.*
+Kconfig.projbuild
 
 # misc
 .DS_Store
