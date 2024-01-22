@@ -19,6 +19,9 @@
 sdkconfig
 sdkconfig.*
 Kconfig.projbuild
+.env*
+.env.*
+.env
 
 speech-to-text-nodejs/node_modules/*
 package-lock.json

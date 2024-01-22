@@ -1,7 +1,11 @@
 const fs = require('fs');
 const axios = require('axios');
+require('dotenv').config()
 
-const API_KEY = 'AIzaSyDyD3Cl845NiAT-lohwsnN_725KC7Q9GAg';
+
+const API_KEY = process.env.GOOGLE_API_KEY || 'GET-YOUR-OWN-KEY';
+
+console.log(API_KEY);
 // const fileName = './audio.raw';
 
 // Reads a local audio file and converts it to base64
