@@ -227,8 +227,8 @@ void translate_task(void *pv)
             //     continue;
             // }
 #endif            
-            ESP_LOGI(TAG, "Translated text = %s, orginal text = %s", fake_translated_text, original_text);
-            google_tts_start(tts, original_text, GOOGLE_TTS_LANG);
+            // ESP_LOGI(TAG, "Translated text = %s, orginal text = %s", fake_translated_text, original_text);
+            // google_tts_start(tts, original_text, GOOGLE_TTS_LANG);
         }
 
     }

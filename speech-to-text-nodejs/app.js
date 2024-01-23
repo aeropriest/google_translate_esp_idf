@@ -22,20 +22,7 @@ console.log(API_KEY);
 //   languageCode: 'en-US',
 // };
 
-const configFLAC  = {
-    config: {
-    encoding:"FLAC",
-    sampleRateHertz: 16000,
-    languageCode: "en-US",
-    enableWordTimeOffsets: false
-    },
-    audio: {
-        uri:"gs://cloud-samples-tests/speech/brooklyn.flac"
-    }
-}
-//   audio: audio,
-//   config: config
-const request = {
+const flac_request = {
     config: {
     encoding:"FLAC",
     sampleRateHertz: 16000,
@@ -47,13 +34,25 @@ const request = {
     }
 };
 
+const wave_request = {
+  config: {
+    encoding:"WAVE",
+    sampleRateHertz: 16000,
+    languageCode: "en-US",
+  enableWordTimeOffsets: false
+  },
+  audio: {
+      uri:"gs://gappu/google-speech-test/audio-files/Sample file.wav"
+  }
+};
+
 const apiKey = API_KEY;
 const url = `https://speech.googleapis.com/v1/speech:recognize?key=${apiKey}`;
 
 axios.request({
   url,
   method: 'POST',
-  data: request
+  data: wave_request
 })
 .then(response => {
   const transcription = response.data.results

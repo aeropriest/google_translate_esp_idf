@@ -171,7 +171,11 @@ static esp_err_t _http_stream_writer_event_handle(http_stream_event_msg_t *msg)
         if (sr->is_begin) {
             sr->is_begin = false;
 
+
             int sr_begin_len = snprintf(sr->buffer, sr->buffer_size, GOOGLE_SR_BEGIN, sr->lang_code, encoding_map[sr->encoding], sr->sample_rates);
+
+            ESP_LOGI(TAG,"[ + ] Begin Message buffer is %s ", (char *)sr->buffer);
+
             if (sr->on_begin) {
                 sr->on_begin(sr);
             }
@@ -187,7 +191,6 @@ static esp_err_t _http_stream_writer_event_handle(http_stream_event_msg_t *msg)
         memcpy(sr->buffer + sr->remain_len, msg->buffer, msg->buffer_len);
         sr->remain_len += msg->buffer_len;
         int keep_next_time = sr->remain_len % 3;
-
         sr->remain_len -= keep_next_time;
         if (mbedtls_base64_encode((unsigned char *)sr->b64_buffer, sr->buffer_size,  &need_write, (unsigned char *)sr->buffer, sr->remain_len) != 0) {
             ESP_LOGE(TAG, "Error encode b64");
@@ -196,6 +199,7 @@ static esp_err_t _http_stream_writer_event_handle(http_stream_event_msg_t *msg)
         if (keep_next_time > 0) {
             memcpy(sr->buffer, sr->buffer + sr->remain_len, keep_next_time);
         }
+        ESP_LOGI(TAG,"[ +1 ] Write b64 audio data now message buffer len %d remaining len %d next time %d",msg->buffer_len, sr->remain_len, keep_next_time);
         sr->remain_len = keep_next_time;
         ESP_LOGD(TAG, "\033[A\33[2K\rTotal bytes written: %d", sr->sr_total_write);
 
@@ -204,6 +208,7 @@ static esp_err_t _http_stream_writer_event_handle(http_stream_event_msg_t *msg)
             return write_len;
         }
         sr->sr_total_write += write_len;
+        ESP_LOGI(TAG,"[ +2 ] Total written %d ", write_len);
         return write_len;
     }
 
@@ -211,6 +216,7 @@ static esp_err_t _http_stream_writer_event_handle(http_stream_event_msg_t *msg)
     if (msg->event_id == HTTP_STREAM_POST_REQUEST) {
         ESP_LOGI(TAG, "[ + ] HTTP client HTTP_STREAM_POST_REQUEST, write end chunked marker");
         need_write = 0;
+        ESP_LOGI(TAG, "[ +1 ] Remaing len is %d %s", sr->remain_len, (unsigned char *)sr->buffer);
         if (sr->remain_len) {
             if (mbedtls_base64_encode((unsigned char *)sr->b64_buffer, sr->buffer_size,  &need_write, (unsigned char *)sr->buffer, sr->remain_len) != 0) {
                 ESP_LOGE(TAG, "Error encode b64");
@@ -222,7 +228,7 @@ static esp_err_t _http_stream_writer_event_handle(http_stream_event_msg_t *msg)
             }
         }
         write_len = _http_write_chunk(http, GOOGLE_SR_END, strlen(GOOGLE_SR_END));
-
+        ESP_LOGI(TAG, "[ +1 ] Written len %d", write_len);
         if (write_len <= 0) {
             return ESP_FAIL;
         }
